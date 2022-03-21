@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: Cards;
+        src: url("http://wojrep.actuna.pl:88/statics/fonts/FontsFree-Net-CARDS.ttf");
+      }
+
+      body {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Karty krupiera - punkty: {{croupier_score}}</h2>
+    <br />
+    {%for card in croupier_cards%}
+    <img src="{{cards_folder}}/{{card}}" style="width: 120px; height: 160px" />
+    {%endfor%} <br /><br /><br />
+    <h2>Moje karty - punkty: {{player_score}}</h2>
+    <br />
+    {%for card in player_cards%}
+    <img src="{{cards_folder}}/{{card}}" style="width: 120px; height: 160px" />
+    {%endfor%} {%if game_state == "Winner"%}<br />You won !!! <br />
+    <form action="/" method="post">
+      <p><input type="submit" value="StartGame" name="startgame" /></p>
+    </form>
+    {%elif game_state == "Loser"%} You have lost !!! {%elif game_state ==
+    "ToDraw"%}<br />To draw.<br />
+    <form action="/" method="post">
+      <p><input type="submit" value="StartGame" name="startgame" /></p>
+    </form>
+    {%elif game_state == "Error"%}Error{%elif game_state == "ToMany"%}<br />You
+    have too many score - you lost !!!<br />
+    <form action="/" method="post">
+      <p><input type="submit" value="StartGame" name="startgame" /></p>
+    </form>
+    {%else %}
+    <form action="/" method="post">
+      <p>
+        <input type="submit" value="GetOneCard" name="getonecard" />
+        <input type="submit" value="WillPass" name="willpass" />
+      </p>
+    </form>
+    {%endif%}
+
+    <br />
+  </body>
+</html>

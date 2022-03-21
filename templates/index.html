@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: Cards;
+        src: url("http://wojrep.actuna.pl:88/statics/fonts/FontsFree-Net-CARDS.ttf");
+      }
+
+      .card {
+        font-family: "Cards";
+        font-size: 128px;
+        background: white;
+      }
+      body {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>BlackJack Simulator</h1>
+    <br />Game status: {{game_state}}<br />
+    <br />Game debug: {{game_debug}}<br />
+    <form action="/" method="post">
+      <p><input type="submit" value="StartGame" name="startgame" /></p>
+    </form>
+  </body>
+</html>

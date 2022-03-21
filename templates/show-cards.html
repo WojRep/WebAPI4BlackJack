@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: Cards;
+        src: url("http://wojrep.actuna.pl:88/statics/fonts/FontsFree-Net-CARDS.ttf");
+      }
+
+      body {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    {% for card in cards %}
+    <img src="{{card}}" style="width: 120px; height: 160px" />
+    {%endfor%}
+  </body>
+</html>
