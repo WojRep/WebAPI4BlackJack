@@ -1,5 +1,6 @@
 from blackjack.deck import *
 from blackjack.player import *
+from blackjack.exception import GameOver, GameWinner as Winner
 
 class BlackJack(object):
     """

@@ -117,6 +117,8 @@ def index():
             session['game'] = jsonpickle.encode(game)
             #game_debug = session.get('game')
             croupier_cards = game.show_cards(0)[1]
+            if len(croupier_cards) == 2 and game_state == 'playing':
+                croupier_cards[1] = 'reverse.png'
             croupier_score = game.show_cards(0)[0]
             player_cards = game.show_cards(1)[1]
             player_score = game.show_cards(1)[0]
