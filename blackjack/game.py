@@ -15,13 +15,14 @@ class Game:
         GameLoser: exception when any player above 21
     """
     games_list = []
+
     def __init__(self, game_id) -> None:
         self.game_id = game_id
         self.check_id()
         self.game = BlackJack(self.game_id)
 
     @staticmethod
-    def call_test(game_id = None, method = None, filed = None):
+    def call_game(game_id = None, method = None, filed = None):
         """A static method calling the appropriate game instance according to the ID
 
         Args:
@@ -32,7 +33,9 @@ class Game:
         Returns:
             any, optional : instance field if called
         """
+        print(Game.games_list)
         user_game = [game for game in Game.games_list if game.game_id == game_id]
+        print(user_game)
         if user_game:
             try:
                 if method:
@@ -66,7 +69,7 @@ class Game:
         self.game.deal_cards(2)
         if self.game.players[1].cards_score == 21:
             err = GameWinner(f'{self.game.players[1].player_name} zdobył 21. Wygrywa.')
-        return self.game.players[0].cards, self.game.players[0].cards, err
+        return self.game.players[0].cards, self.game.players[1].cards, err
 
     def get_one_card(self):
         """the player draws a card
@@ -79,7 +82,7 @@ class Game:
         self.game.players[1].add_card(new_card)
         if self.game.players[1].cards_score > 21:
             err = GameLoser(f'{self.game.players[1].player_name} przekroczył 21. Przegrywa.')
-        return self.game.players[1].cards, err
+        return self.game.players[0].cards, self.game.players[1].cards, err
 
     def will_pass(self):
         """croupier turn
@@ -95,4 +98,4 @@ class Game:
             self.game.players[0].add_card(new_card)
         if self.game.players[0].cards_score > 21:
             err = GameLoser(f'{self.game.players[0].player_name} przekroczył 21. Przegrywa.')
-        return self.game.players[0].cards, err
+        return self.game.players[0].cards, self.game.players[1].cards, err

@@ -38,6 +38,7 @@
     {%else %}
     <form action="/" method="post">
       <p>
+        <div><input type="hidden" value={{game_id}} name="game_id"></div>
         <input type="submit" value="GetOneCard" name="getonecard" />
         <input type="submit" value="WillPass" name="willpass" />
       </p>

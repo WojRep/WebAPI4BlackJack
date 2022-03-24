@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, session
 from os import listdir
 from os.path import isfile, join
+from random import choice
 #
 import json
 import jsonpickle
@@ -17,7 +18,7 @@ card_filename_prefix = "nicubunu_Ornamental_deck_"
 # from blackjack.player import *
 from blackjack.exception import *
 from blackjack.blackjack import BlackJack
-
+from blackjack.game import Game
 
 
 
@@ -53,54 +54,38 @@ def index():
     game_state = "INIT_START"
     game_debug = ""
     if (request.method == 'GET'):
+        game_id = 'test_app_id' + choice(['a','b','c','d'])
         game_state = "Start"
-        return render_template("index.html", game_state = game_state)
+        Game(game_id)
+        return render_template("index.html", game_state = game_state, game_id = game_id)
     elif (request.method == 'POST'):
         try:
             if (request.form.get('startgame') == "StartGame"):
-                game_state = "playing"
-                game = BlackJack()
-                game.get_deck()
-                game.create_players()
-                #game_debug = game.my_deck
-                game.deal_cards(2)
+                game_id = request.form.get('game_id')
+                croupier_cards, player_cards, err = Game.call_game(game_id, method = 'start_game')
+                if err:
+                    raise err
 
             elif (request.form.get('getonecard') == "GetOneCard"):
-                game_session = session.get('game')
-                game = jsonpickle.decode(game_session)
-                new_card = game.issue_card()
-                game.players[1].add_card(new_card)
+                game_id = request.form.get('game_id')
+                croupier_cards, player_cards, err = Game.call_game(game_id, method = 'get_one_card')
+                if err:
+                    raise err
 
             elif (request.form.get('willpass') == "WillPass"):
-                game_session = session.get('game')
-                game = jsonpickle.decode(game_session)
-                while True:
-                    new_card = game.issue_card()
-                    game.players[0].add_card(new_card)
-                    if game.players[0].cards_score > 21:
-                        raise GameWinner("Wygrałeś - krupier przekroczył 21 punkty")
-                    if game.players[0].cards_score == 21:
-                        raise GameOver("Przegrałeś - krupier ma 21 punkty")
-            else:
-                raise GameError("Unexpected Error")
-            if (game.players[1].cards_score == 21) and (game.players[0].cards_score < 21):
-                raise GameWinner("Wygrałeś, masz 21 punktu")
-            elif (game.players[1].cards_score > 21) or \
-                ((game.players[1].cards_score < 21) and (game.players[0].cards_score == 21)):
-                raise GameOver("Przegrałeś - przekroczono 21 punkty")
-            elif ((game).players[1].cards_score == 21) and (game.players[0].cards_score == 21):
-                raise GameToDraw("Remis")
-            elif (game.players[1].cards_score < 21) and (game.players[0].cards_score < 21):
-                game_state = "playing"
+                game_id = request.form.get('game_id')
+                croupier_cards, player_cards, err = Game.call_game(game_id, method = 'will_pass')
+                if err:
+                    raise err
 
         except GameOver:
             game_state = "ToMany"
 
-        except GameWinner:
-            game_state = "Winner"
+        except GameWinner as winner:
+            game_state = winner
 
-        except GameLoser:
-            game_state = "Loser"
+        except GameLoser as loser:
+            game_state = loser
 
         except GameToDraw:
             game_state = "ToDraw"
@@ -114,16 +99,16 @@ def index():
 
 
         finally:
-            session['game'] = jsonpickle.encode(game)
+            #session['game'] = jsonpickle.encode(game)
             #game_debug = session.get('game')
-            croupier_cards = game.show_cards(0)[1]
-            if len(croupier_cards) == 2 and game_state == 'playing':
+            #croupier_cards = game.show_cards(0)[1]
+            if croupier_cards and len(croupier_cards) == 2 and game_state == 'playing':
                 croupier_cards[1] = 'reverse.png'
-            croupier_score = game.show_cards(0)[0]
-            player_cards = game.show_cards(1)[1]
-            player_score = game.show_cards(1)[0]
+            croupier_score = Game.call_game(game_id, filed = 'game').players[0].cards_score
+            #player_cards = game.show_cards(1)[1]
+            player_score = Game.call_game(game_id, filed = 'game').players[1].cards_score
             return render_template("play-game.html", \
-                cards_folder = cards_folder, \
+                cards_folder = cards_folder, game_id = game_id,\
                 croupier_cards = croupier_cards, croupier_score = croupier_score, \
                 player_cards = player_cards, player_score = player_score, game_state = game_state, game_debug = game_debug)
 
