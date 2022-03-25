@@ -20,7 +20,7 @@ class BlackJack(object):
     def create_players(self):
         #Tworzymy podana ilość graczy.
         #Zakładamy,ze gracz [0] jest krupierem
-        self.players = [Player(number_player) for number_player in range(2)]
+        self.players = [Player(number_player) for number_player in ['Krupier', 'Gracz']]
 
     def get_deck(self):
         deck = Deck()

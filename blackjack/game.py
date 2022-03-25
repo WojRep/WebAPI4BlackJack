@@ -1,6 +1,6 @@
 """logic of the game"""
 
-from blackjack.exception import GameWinner, GameLoser
+from blackjack.exception import GameWinner, GameError, GameOver
 from blackjack.blackjack import BlackJack
 
 class IdAlreadyExist(Exception):
@@ -33,9 +33,10 @@ class Game:
         Returns:
             any, optional : instance field if called
         """
-        print(Game.games_list)
+        for game in Game.games_list:
+            print(f'{game} --> {game.game_id} // ', end='')
         user_game = [game for game in Game.games_list if game.game_id == game_id]
-        print(user_game)
+        print(f'{user_game} --> {game_id}')
         if user_game:
             try:
                 if method:
@@ -46,21 +47,23 @@ class Game:
 
             except AttributeError as err:
                 raise err
+        else:
+            raise GameError('unknown game id')
 
         return None
 
     def check_id(self):
         """Add game to list if not exist"""
-        if self.game_id not in Game.games_list:
+        if self.game_id not in [game.game_id for game in Game.games_list]:
             Game.games_list.append(self)
         else:
-            raise IdAlreadyExist('game is busy')
+            raise IdAlreadyExist('game id is busy')
 
     def start_game(self):
         """the first hand in the game
 
         Returns:
-            list[Card], list[card], Exception: stored card by croupier,
+            list[Card], list[Card], Exception: stored card by croupier,
             stored card by user, game exception
         """
         err = None
@@ -69,7 +72,7 @@ class Game:
         self.game.deal_cards(2)
         if self.game.players[1].cards_score == 21:
             err = GameWinner(f'{self.game.players[1].player_name} zdobył 21. Wygrywa.')
-        return self.game.players[0].cards, self.game.players[1].cards, err
+        return self.game.players[0].cards[:], self.game.players[1].cards[:], err
 
     def get_one_card(self):
         """the player draws a card
@@ -81,8 +84,8 @@ class Game:
         new_card = self.game.issue_card()
         self.game.players[1].add_card(new_card)
         if self.game.players[1].cards_score > 21:
-            err = GameLoser(f'{self.game.players[1].player_name} przekroczył 21. Przegrywa.')
-        return self.game.players[0].cards, self.game.players[1].cards, err
+            err = GameOver(f'{self.game.players[1].player_name} przekroczył 21. Przegrywa.')
+        return self.game.players[0].cards[:], self.game.players[1].cards[:], err
 
     def will_pass(self):
         """croupier turn
@@ -92,10 +95,17 @@ class Game:
         """
         err = None
         if self.game.players[0].cards_score == 21:
-            err = GameWinner(f'{self.game.players[0].player_name} zdobył 21. Wygrywa.')
+            err = GameOver(f'{self.game.players[0].player_name} zdobył 21. Wygrywa.')
         while self.game.players[0].cards_score < 17:
             new_card = self.game.issue_card()
             self.game.players[0].add_card(new_card)
         if self.game.players[0].cards_score > 21:
-            err = GameLoser(f'{self.game.players[0].player_name} przekroczył 21. Przegrywa.')
-        return self.game.players[0].cards, self.game.players[1].cards, err
+            err = GameWinner(f'{self.game.players[0].player_name} przekroczył 21. Przegrywa.')
+        elif self.game.players[0].cards_score > self.game.players[1].cards_score:
+            err = GameOver(f'{self.game.players[0].player_name} ma więcej punktów. Wygrywa')
+        else:
+            err = GameWinner(f'{self.game.players[1].player_name} ma więcej punktów. Wygrywa')
+        return self.game.players[0].cards[:], self.game.players[1].cards[:], err
+
+    def __del__(self):
+        Game.games_list.remove(self)

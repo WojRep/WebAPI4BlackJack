@@ -1,3 +1,5 @@
+from ast import Break
+from tkinter.messagebox import RETRY
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, session
 from os import listdir
 from os.path import isfile, join
@@ -18,7 +20,7 @@ card_filename_prefix = "nicubunu_Ornamental_deck_"
 # from blackjack.player import *
 from blackjack.exception import *
 from blackjack.blackjack import BlackJack
-from blackjack.game import Game
+from blackjack.game import Game, IdAlreadyExist
 
 
 
@@ -49,48 +51,63 @@ def fonts(path):
     """
     return send_from_directory('statics', path)
 
-@app.route('/',methods = ['POST', 'GET'])
+@app.route('/', methods = ['GET'])
 def index():
     game_state = "INIT_START"
     game_debug = ""
-    if (request.method == 'GET'):
-        game_id = 'test_app_id' + choice(['a','b','c','d'])
-        game_state = "Start"
+    game_id = 'test_app_id' + choice(['a','b','c','d'])
+    try:
         Game(game_id)
-        return render_template("index.html", game_state = game_state, game_id = game_id)
-    elif (request.method == 'POST'):
+    except IdAlreadyExist:
+        game_id += choice(['a','b','c','d'])
+        Game(game_id)
+
+    game_state = "Start"
+    session['game_id'] = game_id
+    return render_template("index.html", game_state = game_state)
+
+@app.route('/', methods = ['POST'])
+def paly_game():
+    if 'game_id' in session:
+        game_id = session['game_id']
+        game_state = "playing"
+        winner_msg = None
         try:
             if (request.form.get('startgame') == "StartGame"):
-                game_id = request.form.get('game_id')
                 croupier_cards, player_cards, err = Game.call_game(game_id, method = 'start_game')
                 if err:
                     raise err
 
             elif (request.form.get('getonecard') == "GetOneCard"):
-                game_id = request.form.get('game_id')
                 croupier_cards, player_cards, err = Game.call_game(game_id, method = 'get_one_card')
                 if err:
                     raise err
 
             elif (request.form.get('willpass') == "WillPass"):
-                game_id = request.form.get('game_id')
                 croupier_cards, player_cards, err = Game.call_game(game_id, method = 'will_pass')
                 if err:
                     raise err
+            else:
+                raise GameError('unknown game state')
 
-        except GameOver:
+        except GameOver as msg:
+            winner_msg = msg
             game_state = "ToMany"
 
-        except GameWinner as winner:
-            game_state = winner
+        except GameWinner as msg:
+            winner_msg = msg
+            game_state = "Winner"
 
-        except GameLoser as loser:
-            game_state = loser
+        except GameLoser as msg:
+            winner_msg = msg
+            game_state = "Loser"
 
-        except GameToDraw:
+        except GameToDraw as msg:
+            winner_msg = msg
             game_state = "ToDraw"
 
-        except GameError:
+        except GameError as msg:
+            winner_msg = msg
             game_state = "GameError"
 
         except:
@@ -108,13 +125,13 @@ def index():
             #player_cards = game.show_cards(1)[1]
             player_score = Game.call_game(game_id, filed = 'game').players[1].cards_score
             return render_template("play-game.html", \
-                cards_folder = cards_folder, game_id = game_id,\
+                cards_folder = cards_folder,\
                 croupier_cards = croupier_cards, croupier_score = croupier_score, \
-                player_cards = player_cards, player_score = player_score, game_state = game_state, game_debug = game_debug)
+                player_cards = player_cards, player_score = player_score, game_state = game_state, winner_message = winner_msg)
 
     else:
         game_state = "inne"
-        return render_template("index.html", game_state = game_state, game_debug = game_debug)
+        return redirect(url_for('index'))
 
 if __name__=="__main__":
 #    app.run(flask_config)
