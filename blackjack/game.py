@@ -1,7 +1,10 @@
 """logic of the game"""
 
+from this import s
 from blackjack.exception import GameWinner, GameError, GameOver
 from blackjack.blackjack import BlackJack
+
+GAME_DICT = {'game_id' : None, 'deck' : None, 'croupier_cards' : None, 'player_cards' : None}
 
 class IdAlreadyExist(Exception):
     """exception when new user called game in use"""
@@ -108,4 +111,9 @@ class Game:
         return self.game.players[0].cards[:], self.game.players[1].cards[:], err
 
     def __del__(self):
-        Game.games_list.remove(self)
+        GAME_DICT['game_id'] = self.game_id
+        GAME_DICT['croupier_cards'] = [str(card) for card in self.game.players[0].cards[:]]
+        GAME_DICT['player_cards'] = [str(card) for card in self.game.players[1].cards[:]]
+        GAME_DICT['deck'] = [str(card) for card in self.game.my_deck[:]]
+
+        print(GAME_DICT)
