@@ -6,15 +6,28 @@ class Card:
     """
     def __init__(self, card_color, card_value):
         # TODO: Przekazywanie szablony nazwy pliku z kartami
-        card_filename_prefix = "nicubunu_Ornamental_deck_"
+        self.card_filename_prefix = "nicubunu_Ornamental_deck_"
         #
         self.card_color = card_color
         self.card_value = card_value
-        self.name = card_filename_prefix + card_value + "_of_" + card_color +".png"
+        self.name = self.card_filename_prefix + card_value + "_of_" + card_color +".png"
 
     def __str__(self):
         return self.name
 
+    @classmethod
+    def create_card_from_name(self, name : str) -> object:
+        """creating card object from name in str
+
+        Args:
+            name (str): full card name
+
+        Returns:
+            Card (object): instance of Card
+        """
+        name = name.removeprefix(self.card_filename_prefix).removesuffix('.png')
+        value, color = name.split('_of_')
+        return Card(color, value)
 
 class Deck:
     """
@@ -34,6 +47,16 @@ class Deck:
         card_value = ["2", "3", "4", "5", "6", "7", "8", "9", "10", \
             "Jack", "Queen", "King", "Ace"]
         self.deck = [Card(color, value) for value in card_value for color in card_color]
+
+    def restore_deck(self, cards_names : list):
+        """restoring deck from list of cards
+        
+        Args:
+            cards_names (list): list of cards names in str
+        """
+        self.deck =[]
+        for name in cards_names:
+            self.deck.append(Card.create_card_from_name(name))
 
 
     def shuffle(self):

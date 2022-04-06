@@ -21,17 +21,16 @@
     <br />
     {%for card in player_cards%}
     <img src="{{cards_folder}}/{{card}}" style="width: 120px; height: 160px" />
-    {%endfor%} {%if game_state == "Winner"%}<br />You won !!! <br />
+    {%endfor%} {%if game_state == "Winner"%}<br />{{winner_message}}<br />
     <form action="/" method="post">
       <p><input type="submit" value="StartGame" name="startgame" /></p>
     </form>
-    {%elif game_state == "Loser"%} You have lost !!! {%elif game_state ==
-    "ToDraw"%}<br />To draw.<br />
+    {%elif game_state == "Loser"%}{{winner_message}}{%elif game_state ==
+    "ToDraw"%}<br />{{winner_message}}<br />
     <form action="/" method="post">
       <p><input type="submit" value="StartGame" name="startgame" /></p>
     </form>
-    {%elif game_state == "Error"%}Error{%elif game_state == "ToMany"%}<br />You
-    have too many score - you lost !!!<br />
+    {%elif game_state == "Error"%}Error{%elif game_state == "ToMany"%}<br />{{winner_message}}<br />
     <form action="/" method="post">
       <p><input type="submit" value="StartGame" name="startgame" /></p>
     </form>

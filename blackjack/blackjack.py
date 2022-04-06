@@ -6,7 +6,7 @@ class BlackJack(object):
     """
     Klasa od prowadzenia gry
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, name, *args, **kwargs):
         """
         Tworzymy grę z graczami
 
@@ -15,11 +15,12 @@ class BlackJack(object):
         """
         self.players = []
         self.my_deck = []
+        self.name = name
 
     def create_players(self):
         #Tworzymy podana ilość graczy.
         #Zakładamy,ze gracz [0] jest krupierem
-        self.players = [Player(number_player) for number_player in range(2)]
+        self.players = [Player(number_player) for number_player in ['Krupier', 'Gracz']]
 
     def get_deck(self):
         deck = Deck()
