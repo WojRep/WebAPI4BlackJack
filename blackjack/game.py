@@ -1,8 +1,8 @@
 """logic of the game"""
 
-from this import s
 from blackjack.exception import GameWinner, GameError, GameOver
 from blackjack.blackjack import BlackJack
+from blackjack.deck import Card
 
 GAME_DICT = {'game_id' : None, 'deck' : None, 'croupier_cards' : None, 'player_cards' : None}
 
@@ -21,7 +21,7 @@ class Game:
 
     def __init__(self, game_id) -> None:
         self.game_id = game_id
-        self.check_id()
+        #self.check_id()
         self.game = BlackJack(self.game_id)
 
     @staticmethod
@@ -36,22 +36,26 @@ class Game:
         Returns:
             any, optional : instance field if called
         """
-        for game in Game.games_list:
-            print(f'{game} --> {game.game_id} // ', end='')
-        user_game = [game for game in Game.games_list if game.game_id == game_id]
-        print(f'{user_game} --> {game_id}')
-        if user_game:
+        #for game in Game.games_list:
+            #print(f'{game} --> {game.game_id} // ', end='')
+
+        #user_game = [game for game in Game.games_list if game.game_id == game_id]
+        #print(f'{user_game} --> {game_id}')
+        if game_id == GAME_DICT['game_id']:
             try:
                 if method:
-                    return getattr(user_game[0], method)()
+                    print(method)
+                    return getattr(Game(game_id), method)(deck = GAME_DICT['deck'],
+                        croupier_cards = GAME_DICT['croupier_cards'],
+                        player_cards = GAME_DICT['player_cards'])
 
                 if filed:
-                    return getattr(user_game[0], filed)
+                    return getattr(Game(game_id), filed)
 
             except AttributeError as err:
                 raise err
         else:
-            raise GameError('unknown game id')
+            return getattr(Game(game_id), 'start_game')()
 
         return None
 
@@ -77,13 +81,20 @@ class Game:
             err = GameWinner(f'{self.game.players[1].player_name} zdobył 21. Wygrywa.')
         return self.game.players[0].cards[:], self.game.players[1].cards[:], err
 
-    def get_one_card(self):
+    def get_one_card(self, deck, croupier_cards, player_cards):
         """the player draws a card
 
         Returns:
             list[card], Exception: stored card by user, game exception
         """
+        print(croupier_cards, player_cards)
         err = None
+        self.game.create_players()
+        self.game.my_deck = [Card.create_card_from_name(card) for card in deck]
+        self.game.players[0].cards = [Card.create_card_from_name(card) for card in croupier_cards]
+        print(self.game.players[0].cards)
+        self.game.players[1].cards = [Card.create_card_from_name(card) for card in player_cards]
+        print(self.game.players[0].cards)
         new_card = self.game.issue_card()
         self.game.players[1].add_card(new_card)
         if self.game.players[1].cards_score > 21:

@@ -15,8 +15,8 @@ class Card:
     def __str__(self):
         return self.name
 
-    @classmethod
-    def create_card_from_name(self, name : str) -> object:
+    @staticmethod
+    def create_card_from_name(name : str) -> object:
         """creating card object from name in str
 
         Args:
@@ -25,7 +25,7 @@ class Card:
         Returns:
             Card (object): instance of Card
         """
-        name = name.removeprefix(self.card_filename_prefix).removesuffix('.png')
+        name = name.replace('nicubunu_Ornamental_deck_', '').replace('.png', '')
         value, color = name.split('_of_')
         return Card(color, value)
 

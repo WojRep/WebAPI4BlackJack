@@ -55,13 +55,13 @@ def fonts(path):
 def index():
     game_state = "INIT_START"
     game_debug = ""
-    game_id = 'test_app_id' + choice(['a','b','c','d'])
-    try:
-        Game(game_id)
-    except IdAlreadyExist:
-        game_id += choice(['a','b','c','d'])
-        Game(game_id)
-
+    #game_id = 'test_app_id' + choice(['a','b','c','d'])
+    #try:
+    #    Game(game_id)
+    #except IdAlreadyExist:
+    #    game_id += choice(['a','b','c','d'])
+    #    Game(game_id)
+    game_id = 'test'
     game_state = "Start"
     session['game_id'] = game_id
     return render_template("index.html", game_state = game_state)
@@ -72,6 +72,7 @@ def paly_game():
         game_id = session['game_id']
         game_state = "playing"
         winner_msg = None
+        croupier_cards = None
         try:
             if (request.form.get('startgame') == "StartGame"):
                 croupier_cards, player_cards, err = Game.call_game(game_id, method = 'start_game')
@@ -121,9 +122,9 @@ def paly_game():
             #croupier_cards = game.show_cards(0)[1]
             if croupier_cards and len(croupier_cards) == 2 and game_state == 'playing':
                 croupier_cards[1] = 'reverse.png'
-            croupier_score = Game.call_game(game_id, filed = 'game').players[0].cards_score
+            croupier_score = 0 #Game.call_game(game_id, filed = 'game').players[0].cards_score
             #player_cards = game.show_cards(1)[1]
-            player_score = Game.call_game(game_id, filed = 'game').players[1].cards_score
+            player_score = 0 #Game.call_game(game_id, filed = 'game').players[1].cards_score
             return render_template("play-game.html", \
                 cards_folder = cards_folder,\
                 croupier_cards = croupier_cards, croupier_score = croupier_score, \
