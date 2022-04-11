@@ -1,0 +1,14 @@
+# Default
+*
+.*
+!.gitignore
+!*.md
+!*.py
+!*.txt
+
+# Flask
+!templates
+
+# Indywidualne
+!blackjack
+!statics
