@@ -48,17 +48,6 @@ class Deck:
             "Jack", "Queen", "King", "Ace"]
         self.deck = [Card(color, value) for value in card_value for color in card_color]
 
-    def restore_deck(self, cards_names : list):
-        """restoring deck from list of cards
-        
-        Args:
-            cards_names (list): list of cards names in str
-        """
-        self.deck =[]
-        for name in cards_names:
-            self.deck.append(Card.create_card_from_name(name))
-
-
     def shuffle(self):
         """
         Tasuje karty w talii

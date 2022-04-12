@@ -54,6 +54,7 @@ def fonts(path):
 def index():
     game_state = "INIT_START"
     game_debug = ""
+
     session.clear()
 
     game_id = call_game(method='generate_new_id')
@@ -70,21 +71,22 @@ def play_game():
         croupier_cards = None
         try:
             if (request.form.get('startgame') == "StartGame"):
-                croupier_cards, player_cards, err = call_game(game_id, method = 'start_game')
-                if err:
-                    raise err
+                game_return = call_game(game_id, method = 'start_game')
 
             elif (request.form.get('getonecard') == "GetOneCard"):
-                croupier_cards, player_cards, err = call_game(game_id, method = 'get_one_card')
-                if err:
-                    raise err
+                game_return = call_game(game_id, method = 'get_one_card')
 
             elif (request.form.get('willpass') == "WillPass"):
-                croupier_cards, player_cards, err = call_game(game_id, method = 'will_pass')
-                if err:
-                    raise err
+                game_return = call_game(game_id, method = 'will_pass')
             else:
                 raise GameError('unknown game state')
+            croupier_cards = game_return['croupier_cards']
+            croupier_score = game_return['croupier_score']
+            player_cards = game_return['user_cards']
+            player_score = game_return['user_score']
+            exc = game_return['exception']
+            if exc:
+                raise exc
 
         except GameOver as msg:
             winner_msg = msg
@@ -110,20 +112,13 @@ def play_game():
             game_state = "Totalnie coś poszło nie tak !!!"
             return render_template("index.html", game_state = game_state)
 
+        if len(croupier_cards) == 2 and game_state == 'playing':
+            croupier_cards[1] = 'reverse.png'
 
-        finally:
-            #session['game'] = jsonpickle.encode(game)
-            #game_debug = session.get('game')
-            #croupier_cards = game.show_cards(0)[1]
-            if croupier_cards and len(croupier_cards) == 2 and game_state == 'playing':
-                croupier_cards[1] = 'reverse.png'
-            croupier_score = 0 #Game.call_game(game_id, filed = 'game').players[0].cards_score
-            #player_cards = game.show_cards(1)[1]
-            player_score = 0 #Game.call_game(game_id, filed = 'game').players[1].cards_score
-            return render_template("play-game.html", \
-                cards_folder = cards_folder,\
-                croupier_cards = croupier_cards, croupier_score = croupier_score, \
-                player_cards = player_cards, player_score = player_score, game_state = game_state, winner_message = winner_msg)
+        return render_template("play-game.html", \
+            cards_folder = cards_folder,\
+            croupier_cards = croupier_cards, croupier_score = croupier_score, \
+            player_cards = player_cards, player_score = player_score, game_state = game_state, winner_message = winner_msg)
 
     else:
         game_state = "inne"
