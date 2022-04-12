@@ -19,8 +19,7 @@ card_filename_prefix = "nicubunu_Ornamental_deck_"
 # from blackjack.deck import *
 # from blackjack.player import *
 from blackjack.exception import *
-from blackjack.blackjack import BlackJack
-from blackjack.game import Game, IdAlreadyExist
+from blackjack.game import call_game
 
 
 
@@ -55,19 +54,15 @@ def fonts(path):
 def index():
     game_state = "INIT_START"
     game_debug = ""
-    #game_id = 'test_app_id' + choice(['a','b','c','d'])
-    #try:
-    #    Game(game_id)
-    #except IdAlreadyExist:
-    #    game_id += choice(['a','b','c','d'])
-    #    Game(game_id)
-    game_id = 'test'
+    session.clear()
+
+    game_id = call_game(method='generate_new_id')
     game_state = "Start"
     session['game_id'] = game_id
     return render_template("index.html", game_state = game_state)
 
 @app.route('/', methods = ['POST'])
-def paly_game():
+def play_game():
     if 'game_id' in session:
         game_id = session['game_id']
         game_state = "playing"
@@ -75,17 +70,17 @@ def paly_game():
         croupier_cards = None
         try:
             if (request.form.get('startgame') == "StartGame"):
-                croupier_cards, player_cards, err = Game.call_game(game_id, method = 'start_game')
+                croupier_cards, player_cards, err = call_game(game_id, method = 'start_game')
                 if err:
                     raise err
 
             elif (request.form.get('getonecard') == "GetOneCard"):
-                croupier_cards, player_cards, err = Game.call_game(game_id, method = 'get_one_card')
+                croupier_cards, player_cards, err = call_game(game_id, method = 'get_one_card')
                 if err:
                     raise err
 
             elif (request.form.get('willpass') == "WillPass"):
-                croupier_cards, player_cards, err = Game.call_game(game_id, method = 'will_pass')
+                croupier_cards, player_cards, err = call_game(game_id, method = 'will_pass')
                 if err:
                     raise err
             else:

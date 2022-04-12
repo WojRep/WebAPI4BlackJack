@@ -17,54 +17,16 @@ class Game:
         GameWinner: exception when any player 21 scored
         GameLoser: exception when any player above 21
     """
-    games_list = []
 
     def __init__(self, game_id) -> None:
         self.game_id = game_id
-        #self.check_id()
         self.game = BlackJack(self.game_id)
 
+
     @staticmethod
-    def call_game(game_id = None, method = None, filed = None):
-        """A static method calling the appropriate game instance according to the ID
-
-        Args:
-            game_id (game_id): the user's game ID
-            method (str): the name of the called class method
-            filed (str): the name of the called class filed
-
-        Returns:
-            any, optional : instance field if called
-        """
-        #for game in Game.games_list:
-            #print(f'{game} --> {game.game_id} // ', end='')
-
-        #user_game = [game for game in Game.games_list if game.game_id == game_id]
-        #print(f'{user_game} --> {game_id}')
-        if game_id == GAME_DICT['game_id']:
-            try:
-                if method:
-                    print(method)
-                    return getattr(Game(game_id), method)(deck = GAME_DICT['deck'],
-                        croupier_cards = GAME_DICT['croupier_cards'],
-                        player_cards = GAME_DICT['player_cards'])
-
-                if filed:
-                    return getattr(Game(game_id), filed)
-
-            except AttributeError as err:
-                raise err
-        else:
-            return getattr(Game(game_id), 'start_game')()
-
-        return None
-
-    def check_id(self):
-        """Add game to list if not exist"""
-        if self.game_id not in [game.game_id for game in Game.games_list]:
-            Game.games_list.append(self)
-        else:
-            raise IdAlreadyExist('game id is busy')
+    def generate_new_id():
+        new_id = 'test'
+        return new_id
 
     def start_game(self):
         """the first hand in the game
@@ -77,6 +39,7 @@ class Game:
         self.game.get_deck()
         self.game.create_players()
         self.game.deal_cards(2)
+
         if self.game.players[1].cards_score == 21:
             err = GameWinner(f'{self.game.players[1].player_name} zdobył 21. Wygrywa.')
         return self.game.players[0].cards[:], self.game.players[1].cards[:], err
@@ -128,3 +91,42 @@ class Game:
         GAME_DICT['deck'] = [str(card) for card in self.game.my_deck[:]]
 
         print(GAME_DICT)
+
+
+
+def call_game(game_id = None, method = None, filed = None):
+    """function calling the appropriate game instance according to the ID
+
+    Args:
+        game_id (game_id): the user's game ID
+        method (str): the name of the called class method
+        filed (str): the name of the called class filed
+
+    Returns:
+        any, optional : instance field if called
+    """
+    #for game in Game.games_list:
+        #print(f'{game} --> {game.game_id} // ', end='')
+
+    #user_game = [game for game in Game.games_list if game.game_id == game_id]
+    #print(f'{user_game} --> {game_id}')
+    if not game_id:
+        return getattr(Game, 'generate_new_id')()
+
+    if game_id == GAME_DICT['game_id']:
+        try:
+            if method:
+                print(method)
+                return getattr(Game(game_id), method)(deck = GAME_DICT['deck'],
+                    croupier_cards = GAME_DICT['croupier_cards'],
+                    player_cards = GAME_DICT['player_cards'])
+
+            if filed:
+                return getattr(Game(game_id), filed)
+
+        except AttributeError as err:
+            raise err
+    else:
+        return getattr(Game(game_id), 'start_game')()
+
+    return None
