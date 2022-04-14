@@ -12,3 +12,9 @@
 # Indywidualne
 !blackjack
 !statics
+
+!client
+
+!server
+!server/*
+!server/*/*.service

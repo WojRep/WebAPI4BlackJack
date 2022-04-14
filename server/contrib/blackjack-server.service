@@ -1,0 +1,23 @@
+[Unit]
+After=network.target
+Description=blackjack-server
+
+[Service]
+WorkingDirectory=%h/public_html
+Environment="PATH=%h/public_html/.venv/bin"
+
+ExecStart=%h/public_html/.venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5050 -m 007 app:app --access-logfile log/access.log --error-logfile log/error.log
+
+Restart=on-failure
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+KillMode=mixed
+TimeoutStopSec=5
+
+Restart=always
+RestartSec=60
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target

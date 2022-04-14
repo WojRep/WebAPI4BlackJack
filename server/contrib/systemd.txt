@@ -1,0 +1,9 @@
+
+#!/bin/bash
+
+mkdir -p $HOME/.config/systemd/user/
+cp blackjack-server.services $HOME/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable blackjack-server
+systemctl --user start blackjack-server
+
