@@ -16,7 +16,9 @@ class Deck:
         Returns:
             object: Card issued
         """
-        return self.cards.pop()
+        issued_card = self.cards[-1]
+
+        return issued_card
 
     def shuffle(self):
         """

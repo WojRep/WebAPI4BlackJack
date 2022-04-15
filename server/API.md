@@ -5,13 +5,39 @@ Intro to Flask-TESTful: [Flask-RESTful - How to quickly build API - Blog j-labs]
 
 GET:
 
-/game/new -> nowa gra, zwracamy game_id, game_status
+    /game/new -> nowa gra, zwracamy game_id
 
-    game_id: losowy GUID liczba określająca niepowtarzalny identyfikator gry, 32 znaki, hex
+        {
+            game_id: guid
+            }
 
-    game_status:
-        new -> nowa gra nie zainicjowana
-        progress -> gra w trakcie
+        losowy GUID liczba określająca niepowtarzalny identyfikator gry, 32 znaki, hex
 
-POST:
-/game/
+
+
+
+
+
+    /game/{GUID-GAME}
+
+        {
+            game_id: guid,
+            game_status: status,
+            deck: [],
+            players: {
+
+            }
+        }
+
+        game_id: losowy GUID liczba określająca niepowtarzalny identyfikator gry, 32 znaki, hex
+
+        game_status:
+            new -> nowa gra nie zainicjowana
+            progress -> gra w trakcie
+
+
+    /game/{GUID-GAME}/<command>
+
+        command:
+
+            getonecard -> Wydanie jednej karty graczowi
