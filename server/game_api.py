@@ -45,25 +45,17 @@ class PlayGame(Resource):
             case "getonecard":
                 game =  jsonpickle.decode(q.game_data)
 
-                new_card = game.deck.issue_card()
-                game.players[1].add_card(new_card)
-                game_status="getonecard"
+                if (game.players[0].cards_score >= 21) or (game.players[1].cards_score >= 21):
+                    game_status="end"
+                else:
 
-
-                # new_card = game.deck.issue_card()
-                # game.players[0].add_card(new_card)
-
-
-                while True:
+                    game_status="getonecard"
                     new_card = game.deck.issue_card()
                     game.players[1].add_card(new_card)
                     if game.players[1].cards_score > 21:
                         game_status = "loser"
-                        break
                     if game.players[1].cards_score == 21:
                         game_status = "winner"
-                        break
-
 
                 q.game_data = jsonpickle.encode(game)
 

@@ -36,5 +36,5 @@ class Card:
 
         # self.name = card_value + card_color
 
-    def __repr__(self) -> str:
-        return f'{self.card_value} {self.card_color}'
+    def __repr__(self):
+        return f'{self.card_value}:{self.card_color}'

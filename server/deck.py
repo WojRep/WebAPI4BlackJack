@@ -16,7 +16,8 @@ class Deck:
         Returns:
             object: Card issued
         """
-        issued_card = self.cards[-1]
+#        issued_card = self.cards[-1]
+        issued_card = self.cards.pop()
 
         return issued_card
 
