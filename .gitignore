@@ -14,6 +14,7 @@
 !statics
 
 !client
+!client/*
 
 !server
 !server/*
