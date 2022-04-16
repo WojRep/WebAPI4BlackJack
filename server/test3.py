@@ -1,15 +1,17 @@
 from deck import Deck
+import json
+from game import Game
 
 
-deck = Deck()
-deck.shuffle()
+game = Game()
+game.new_game()
 
-x = deck.issue_card()
-print(x)
-print(len(deck.cards))
-x = deck.issue_card()
-print(x)
-print(len(deck.cards))
-x = deck.issue_card()
-print(x)
-print(len(deck.cards))
+# print(game.deck.cards)
+
+
+# for card in game.deck.cards:
+#     print(type(card))
+#     print(str(card))
+# #print(cards)
+
+print(type(game.deck),game.deck)

@@ -1,6 +1,6 @@
 from card import *
 from random import shuffle
-
+import json
 class Deck:
     """
     Create decks of cards
@@ -30,4 +30,7 @@ class Deck:
         """
         return shuffle(self.cards)
 
+    def __str__(self):
+        cards = ', '.join([str(card) for card in self.cards])
+        return cards
 

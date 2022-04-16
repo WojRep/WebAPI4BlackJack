@@ -40,6 +40,7 @@ class Player:
         player_cards =[]
         return [self.player_name, self.cards_score, [player_cards.append(str(card)) for card in list(self.cards)]]
 
+
     # def show_cards(self):
     #     """Zwraca karty danego gracza.
 

@@ -1,7 +1,9 @@
 import uuid
+
+from flask import jsonify
 from player import Player
 from deck import Deck
-
+import json
 
 class Game(object):
     """
@@ -42,6 +44,13 @@ class Game(object):
         # Wydajemy graczom po 2 karty
         self.deal_cards(2)
 
+    def __repr__(self):
+        guid = self.guid
+        deck = str(self.deck)
+        players = {}
+        players.update({str(self.players[n].player_name): {'cards': self.players[n].cards.__str__(), 'score': self.players[n].cards_score} for n in range(len(self.players) )})
+        data = {'game_id': guid, 'deck': deck, 'players': players}
+        return data
 
 
 
